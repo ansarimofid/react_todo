@@ -1,0 +1,22 @@
+{
+  "name": "react_todo",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "ansarimofid"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "js/lib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "react": "^15.3.2",
+    "bootstrap": "^3.3.7"
+  }
+}
