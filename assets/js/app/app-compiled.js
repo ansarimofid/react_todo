@@ -13,20 +13,16 @@ var TodoForm = function TodoForm(_ref) {
 
     var input = void 0;
     return React.createElement(
-        'div',
-        null,
+        'form',
+        { onSubmit: function onSubmit(e) {
+                e.preventDefault();
+                addTodo(input.value);
+                input.value = '';
+            } },
         React.createElement('input', {
             ref: function ref(node) {
                 input = node;
-            } }),
-        React.createElement(
-            'button',
-            { onClick: function onClick() {
-                    addTodo(input.value);
-                    input.value = '';
-                } },
-            '+'
-        )
+            } })
     );
 };
 
@@ -58,7 +54,9 @@ var TodoList = function TodoList(_ref3) {
     );
 };
 
-var Title = function Title() {
+var Title = function Title(_ref4) {
+    var todoCount = _ref4.todoCount;
+
     return React.createElement(
         'div',
         null,
@@ -68,7 +66,9 @@ var Title = function Title() {
             React.createElement(
                 'h1',
                 null,
-                'To-do'
+                'To-do (',
+                todoCount,
+                ')'
             )
         )
     );
@@ -87,27 +87,47 @@ var TodoApp = function (_React$Component) {
             data: []
         };
 
-        _this.addTodo = _this.addTodo.bind(_this);
-        _this.handleRemove = _this.handleRemove.bind(_this);
+        _this.apiUrl = 'https://57b1924b46b57d1100a3c3f8.mockapi.io/api/todos';
         return _this;
     }
 
     _createClass(TodoApp, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            var _this2 = this;
+
+            axios.get(this.apiUrl).then(function (res) {
+                console.log(res);
+                _this2.setState({ data: res.data });
+            });
+        }
+    }, {
         key: 'addTodo',
         value: function addTodo(val) {
-            var todo = { text: val, id: window.id++ };
+            var _this3 = this;
 
-            this.state.data.push(todo);
+            var todo = { text: val };
 
-            this.setState({ data: this.state.data });
+            axios.post(this.apiUrl, todo).then(function (res) {
+                _this3.state.data.push(res.data);
+                _this3.setState({ data: _this3.state.data });
+            });
+            // this.state.data.push(todo);
+
+            // this.setState({data:this.state.data});
         }
     }, {
         key: 'handleRemove',
         value: function handleRemove(id) {
+            var _this4 = this;
+
             var remainder = this.state.data.filter(function (todo) {
                 if (todo.id != id) return todo.id;
             });
-            this.setState({ data: remainder });
+
+            axiom.delete(this.apiUrl + '/' + id).then(function (res) {
+                _this4.setState({ data: remainder });
+            });
         }
     }, {
         key: 'render',
@@ -115,7 +135,7 @@ var TodoApp = function (_React$Component) {
             return React.createElement(
                 'div',
                 null,
-                React.createElement(Title, null),
+                React.createElement(Title, { todoCount: this.state.data.length }),
                 React.createElement(TodoForm, {
                     addTodo: this.addTodo.bind(this)
                 }),

@@ -1,16 +1,16 @@
 const TodoForm =  ({addTodo}) =>{
     let input;
     return (
-        <div>
+        <form onSubmit={(e)=>{
+            e.preventDefault();
+            addTodo(input.value);
+            input.value='';
+        }}>
             <input
                 ref={node=>{
                     input = node;
                 }}/>
-            <button onClick={()=>{
-                addTodo(input.value);
-                input.value='';
-            }}>+</button>
-        </div>
+        </form>
     );
 };
 
@@ -26,10 +26,10 @@ const TodoList = ({todos,remove}) => {
     return (<ul>{todoNode}</ul>);
 };
 
-const Title = ()=>{
+const Title = ({todoCount})=>{
     return (<div>
         <div>
-            <h1>To-do</h1>
+            <h1>To-do ({todoCount})</h1>
         </div>
     </div>);
 };
@@ -42,29 +42,46 @@ class TodoApp extends React.Component{
             data:[]
         };
 
-        this.addTodo = this.addTodo.bind(this);
-        this.handleRemove = this.handleRemove.bind(this);
+        this.apiUrl = 'https://57b1924b46b57d1100a3c3f8.mockapi.io/api/todos';
+    }
+
+    componentDidMount(){
+        axios.get(this.apiUrl)
+            .then((res)=>{
+                console.log(res);
+                this.setState({data:res.data});
+            });
     }
 
     addTodo(val){
-        const todo = {text:val,id:window.id++};
+        const todo = {text:val};
 
-        this.state.data.push(todo);
+        axios.post(this.apiUrl,todo)
+            .then((res)=>{
+                this.state.data.push(res.data);
+                this.setState({data:this.state.data});
+            });
+        // this.state.data.push(todo);
 
-        this.setState({data:this.state.data});
+        // this.setState({data:this.state.data});
     }
 
     handleRemove(id){
         const remainder = this.state.data.filter((todo)=>{
             if(todo.id!=id) return todo.id;
         });
-         this.setState({data:remainder});
+
+
+        axiom.delete(this.apiUrl+'/'+id)
+            .then((res)=>{
+                this.setState({data:remainder});
+            })
     }
 
     render(){
         return(
             <div>
-                <Title/>
+                <Title todoCount={this.state.data.length}/>
                 <TodoForm
                     addTodo={this.addTodo.bind(this)}
                 />
