@@ -23,11 +23,11 @@ const TodoList = ({todos,remove}) => {
         return (<Todo todo={todo} key={todo.id} remove={remove}/>)
     });
 
-    return (<ul>{todoNode}</ul>);
+    return (<ul >{todoNode}</ul>);
 };
 
 const Title = ({todoCount})=>{
-    return (<div>
+    return (<div >
         <div>
             <h1>To-do ({todoCount})</h1>
         </div>
@@ -42,7 +42,7 @@ class TodoApp extends React.Component{
             data:[]
         };
 
-        this.apiUrl = 'https://57b1924b46b57d1100a3c3f8.mockapi.io/api/todos';
+        this.apiUrl = 'http://58039d9bc839a411002d701e.mockapi.io/api/todos/todos';
     }
 
     componentDidMount(){
@@ -61,9 +61,7 @@ class TodoApp extends React.Component{
                 this.state.data.push(res.data);
                 this.setState({data:this.state.data});
             });
-        // this.state.data.push(todo);
 
-        // this.setState({data:this.state.data});
     }
 
     handleRemove(id){
@@ -72,7 +70,7 @@ class TodoApp extends React.Component{
         });
 
 
-        axiom.delete(this.apiUrl+'/'+id)
+        axios.delete(this.apiUrl+'/'+id)
             .then((res)=>{
                 this.setState({data:remainder});
             })
